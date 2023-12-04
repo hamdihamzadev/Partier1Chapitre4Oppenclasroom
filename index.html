@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<link rel="stylesheet" href="./styles.css" />
+	<title>Cafe with a Vue</title>
+</head>
+
+<body style="background-color: black; color: white;">
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+	<div id="app" class="app">
+
+		<header>
+			<h1>{{ restaurantName }}</h1>
+			<p class="description">
+				Welcome to {{ restaurantName }}! We are known for our freshly baked
+				bread and french pastries! Give you morning a warm start or treat
+				yourself in the middle of the day. Our butter is imported from local
+				farmers in France. Once you take your first bite, you will see why
+				everyone can't get enough!
+			</p>
+		</header>
+
+		<section class="menu">
+			<h2>Menu</h2>
+			<div class="menu-item" v-for="item in simpleMenu">
+				<img class="menu-item__image" v-bind:src="item.image.source" v-bind:alt="item.image.alt" />
+				<div>
+					<div class="information-item">
+						<h3>{{item.name}} </h3>
+						<p v-if="item.inStock" style="margin-top: 3px;"> In Stock</p>
+						<p v-else style="margin-top: 3px;">Out of Stock</p>
+					</div>
+					<div class="shop">
+						<div class="quatity">
+							<label for="add-item-quantity">Quantity:{{item.quantity}} </label>
+							<input id="add-item-quantity" type="number" v-model="item.quantity" />
+						</div>
+						<button @click="addTotalShoping">Add to Shopping Cart</button>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<aside class="shopping-cart">
+			<h2>Shopping Cart:{{totalShopping}} items</h2>
+		</aside>
+
+		<footer>
+			<div class="contact">
+				<div class="contact-us">
+					<h2>Contact Us</h2>
+					<div class="contact-support">
+						<p>Address: {{ address }}</p>
+						<p>Phone: {{ phone }}</p>
+						<p>Email: {{ email }}</p>
+					</div>
+
+				</div>
+				<div class="hours">
+					<h2>Hours:</h2>
+					<ul>
+						<li>M-F: 06:00 to 16:00</li>
+						<li>Saturday: 07:00 to 14:00</li>
+						<li>Sunday: 07:00 to 12:00</li>
+					</ul>
+				</div>
+			</div>
+			<p>Copyright {{ restaurantName }} 2019</p>
+		</footer>
+
+
+	</div>
+
+	<script>
+		const {
+			createApp,
+			ref,
+			computed
+		} = Vue
+		createApp({
+			setup() {
+
+				const address = ref('9274 Beurre Ave, Paris, France'),
+					email = ref('hello@cafewithavue.bakery'),
+					phone = ref('+08 88 88 88 88 88'),
+					restaurantName = ref('Cafe with A Vue'),
+					totalShopping = ref(0)
+
+				const simpleMenu = ref([{
+						name: 'Crossiant',
+						image: {
+							source: './images/crossiant.jpg',
+							alt: 'A crossiant'
+						},
+						inStock: true,
+						quantity: 0
+					},
+					{
+						name: 'French Baguette',
+						image: {
+							source: './images/french-baguette.jpeg',
+							alt: 'Four French Baguettes'
+						},
+						inStock: true,
+						quantity: 0
+					},
+					{
+						name: 'Éclair',
+						image: {
+							source: './images/eclair.jpg',
+							alt: 'Chocolate Éclair'
+						},
+						inStock: false,
+						quantity: 0
+					}
+				])
+
+				const copyright = computed(() => {
+					const currentYear = new Date().getFullYear()
+					return `Copyright ${this.restaurantName} ${currentYear}`
+				})
+
+				function addTotalShoping() {
+
+					let allTotal = simpleMenu.value.reduce(function (total, item) {
+						return total + item.quantity
+					}, 0)
+
+					return totalShopping.value = allTotal
+				}
+
+
+				return {
+					copyright,
+					simpleMenu,
+					address,
+					email,
+					phone,
+					restaurantName,
+					addTotalShoping,
+					totalShopping
+
+				}
+
+
+			}
+
+		}).mount('#app')
+	</script>
+
+	<style>
+		.menu-item {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+	</style>
+
+</body>
+
+</html>
